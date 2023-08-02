@@ -1,0 +1,18 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+	<PropertyGroup>
+		<OutputType>Exe</OutputType>
+		<TargetFramework>net6.0</TargetFramework>
+		<ImplicitUsings>enable</ImplicitUsings>
+		<StartupObject>SFA2GraphCLI.Program</StartupObject>
+	</PropertyGroup>
+
+	<ItemGroup>
+		<PackageReference Include="ShellProgressBar" Version="5.2.0" />
+	</ItemGroup>
+
+	<ItemGroup>
+		<ProjectReference Include="..\SFA2Graph\SFA2Graph.csproj" />
+	</ItemGroup>
+
+</Project>
