@@ -3,9 +3,14 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.6.33829.357
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SFA2IVUGraph", "SFA2Graph\SFA2Graph.csproj", "{0A1F4CF0-8EB5-4A6D-82BD-E369D7452D7C}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SFA2Graph", "SFA2Graph\SFA2Graph.csproj", "{0A1F4CF0-8EB5-4A6D-82BD-E369D7452D7C}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SFA2GraphCLI", "SFA2GraphCLI\SFA2GraphCLI.csproj", "{BD053466-0AAE-47D9-8CE2-660BCBD58BB9}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SFA2GraphCLI", "SFA2GraphCLI\SFA2GraphCLI.csproj", "{BD053466-0AAE-47D9-8CE2-660BCBD58BB9}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Additionals", "Additionals", "{2BDA4F7F-C9C4-4E87-8C5D-C6DCF29E0CE6}"
+	ProjectSection(SolutionItems) = preProject
+		Additionals\ReadMe.md = Additionals\ReadMe.md
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
