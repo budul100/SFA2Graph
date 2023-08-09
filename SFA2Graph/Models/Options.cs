@@ -34,11 +34,7 @@ namespace SFA2Graph.Models
             HelpText = "Attributes where one must exist to be considered as locations and which is used to group the lines. " +
                 "The attributes must be split by a comma.",
             Separator = ',',
-            Required = false,
-            Default = new string[]
-            {
-                "name", "description",
-            })]
+            Required = false)]
         public IEnumerable<string> LineAttributesKey { get; set; }
 
         [Option(
