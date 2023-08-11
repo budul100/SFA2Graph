@@ -3,6 +3,8 @@
 echo.
 set /p "INPUTFILE=Enter path of geojson file: "
 
+for %%f in ("%INPUTFILE%") do set ZIPFILE=%%~dpnf_RoutingGraph.zip
+
 echo.
 echo Convert %INPUTFILE%
 echo.
@@ -37,6 +39,6 @@ echo.
 
 pushd .\Additionals\MakeGrph\RoutingGraph
 
-tar -a -c -f ..\RoutingGraph.zip *
+tar -a -c -f "%ZIPFILE%" *
 
 popd
