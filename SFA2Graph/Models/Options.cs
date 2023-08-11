@@ -21,12 +21,7 @@ namespace SFA2Graph.Models
             HelpText = "Key value pairs of attributes where one must exist to be considered as line. The value must be a regular expression. " +
                 "Keys, values, and pairs must be split by a comma.",
             Separator = ',',
-            Required = false,
-            Default = new string[]
-            {
-                "type", "route",
-                "type", "route_master",
-            })]
+            Required = false)]
         public IEnumerable<string> LineAttributesFilter { get; set; }
 
         [Option(
