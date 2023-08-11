@@ -22,8 +22,6 @@ namespace SFA2Graph.Writers
         private const int RoadclassDefault = 1;
         private const int TypDefault = 0;
 
-        private readonly HashSet<Arc> arcs = new();
-
         #endregion Private Fields
 
         #region Public Methods
@@ -34,11 +32,12 @@ namespace SFA2Graph.Writers
                 steps: 2,
                 status: "Create routing graph");
 
-            LoadArcs(
+            var arcs = GetArcs(
                 lines: lines,
                 parentPackage: infoPackage);
 
             WriteRouting(
+                arcs: arcs,
                 path: path,
                 parentPackage: infoPackage);
         }
@@ -47,7 +46,7 @@ namespace SFA2Graph.Writers
 
         #region Private Methods
 
-        private void LoadArcs(IEnumerable<Feature> lines, IPackage parentPackage)
+        private IEnumerable<Arc> GetArcs(IEnumerable<Feature> lines, IPackage parentPackage)
         {
             using var infoPackage = parentPackage.GetPackage(
                 items: lines,
@@ -55,6 +54,8 @@ namespace SFA2Graph.Writers
 
             var index = IndexStart;
             var delimiter = Vertice.VerticesDelimiter.ToString();
+
+            var result = new Dictionary<string, Arc>();
 
             foreach (var line in lines)
             {
@@ -67,34 +68,41 @@ namespace SFA2Graph.Writers
                         .Select(v => v.ToString())
                         .Join(delimiter: delimiter);
 
-                    var lastCoordinate = vertices.LastOrDefault()?.Coordinate
-                        ?? geometry.Coordinates[0];
-                    var lastDistance = vertices.LastOrDefault()?.Distance
-                        ?? 0;
-                    var length = lastDistance + lastCoordinate.GetDistance(geometry.Coordinates[^1]);
-
-                    var arc = new Arc
+                    if (!result.ContainsKey(verticesText))
                     {
-                        ArcID = ++index,
-                        FromX = geometry.Coordinates[0].X,
-                        FromY = geometry.Coordinates[0].Y,
-                        Length = length,
-                        Level = LevelDefault,
-                        RoadClass = RoadclassDefault,
-                        ToX = geometry.Coordinates[^1].X,
-                        ToY = geometry.Coordinates[^1].Y,
-                        Typ = TypDefault,
-                        Vertices = verticesText,
-                    };
+                        var lastCoordinate = vertices.LastOrDefault()?.Coordinate
+                            ?? geometry.Coordinates[0];
+                        var lastDistance = vertices.LastOrDefault()?.Distance
+                            ?? 0;
+                        var length = lastDistance + lastCoordinate.GetDistance(geometry.Coordinates[^1]);
 
-                    arcs.Add(arc);
+                        var arc = new Arc
+                        {
+                            ArcID = ++index,
+                            FromX = geometry.Coordinates[0].X,
+                            FromY = geometry.Coordinates[0].Y,
+                            Length = length,
+                            Level = LevelDefault,
+                            RoadClass = RoadclassDefault,
+                            ToX = geometry.Coordinates[^1].X,
+                            ToY = geometry.Coordinates[^1].Y,
+                            Typ = TypDefault,
+                            Vertices = verticesText,
+                        };
+
+                        result.Add(
+                            key: verticesText,
+                            value: arc);
+                    }
                 }
 
                 infoPackage.NextStep();
             }
+
+            return result.Values;
         }
 
-        private void WriteRouting(string path, IPackage parentPackage)
+        private void WriteRouting(IEnumerable<Arc> arcs, string path, IPackage parentPackage)
         {
             using var infoPackage = parentPackage.GetPackage(
                 status: "Write file.");
