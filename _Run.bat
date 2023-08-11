@@ -8,4 +8,4 @@ echo.
 echo Convert %INPUTFILE%
 echo.
 
-.\SFASimplifierCLI\bin\Debug\net6.0\SFASimplifierCLI.exe -i "%INPUTFILE%" -o "%ROUTINGFILE%"
+.\SFA2GraphCLI\bin\Debug\net6.0\SFA2GraphCLI.exe -i "%INPUTFILE%" -o "%ROUTINGFILE%"
