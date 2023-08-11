@@ -1,6 +1,7 @@
 ﻿using ProgressWatcher;
 using ProgressWatcher.Interfaces;
 using SFA2Graph.Extensions;
+using SFA2Graph.Factories;
 using SFA2Graph.Models;
 using SFA2Graph.Repositories;
 using SFA2Graph.Writers;
@@ -16,10 +17,12 @@ namespace SFA2Graph
 
         private const double StatusWeightLoadingFiles = 0.7;
 
+        private readonly ArcFactory arcFactory;
         private readonly FeatureRepository lineRepository;
         private readonly Action<double, string> onProgressChange;
         private readonly Options options;
         private readonly Watcher progressWatcher;
+        private readonly RoutingWriter routingWriter;
 
         #endregion Private Fields
 
@@ -41,6 +44,11 @@ namespace SFA2Graph
                 types: options.LineTypes,
                 attributesKey: options.LineAttributesKey,
                 attributesFilter: lineAttributesFilter);
+
+            arcFactory = new ArcFactory(
+                decimalPoints: options.DecimalPoints);
+
+            routingWriter = new RoutingWriter();
         }
 
         #endregion Public Constructors
@@ -50,7 +58,7 @@ namespace SFA2Graph
         public void Run()
         {
             using var infoPackage = progressWatcher.Initialize(
-                allSteps: 2,
+                allSteps: 3,
                 status: "Convert SFA data.");
 
             LoadFiles(
@@ -61,10 +69,12 @@ namespace SFA2Graph
                 lineFilters: options.LineFilters,
                 attributesKey: options.LineAttributesKey)).ToArray();
 
-            var routingWriter = new RoutingWriter();
+            arcFactory.Load(
+                lines: lines,
+                parentPackage: infoPackage);
 
             routingWriter.Write(
-                lines: lines,
+                arcs: arcFactory.Contents,
                 path: options.OutputPath,
                 parentPackage: infoPackage);
         }

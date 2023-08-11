@@ -42,3 +42,5 @@ pushd .\Additionals\MakeGrph\RoutingGraph
 tar -a -c -f "%ZIPFILE%" *
 
 popd
+
+PAUSE

@@ -2,6 +2,7 @@
 using CommandLine.Text;
 using SFA2Graph.Models;
 using ShellProgressBar;
+using System.Diagnostics;
 
 namespace SFA2GraphCLI
 {
@@ -59,7 +60,7 @@ namespace SFA2GraphCLI
             {
                 using var progressBar = new ProgressBar(
                     maxTicks: ProgressMaxTicks,
-                    message: "Simplify SFA data.");
+                    message: "Create IVU routing graphs from SFA data.");
 
                 var progressReport = progressBar.AsProgress<float>();
 
@@ -83,6 +84,8 @@ namespace SFA2GraphCLI
 
                 result = exception?.InnerException?.HResult
                     ?? exception.HResult;
+
+                Debugger.Break();
             }
 
             return result;

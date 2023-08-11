@@ -11,13 +11,13 @@ namespace SFA2Graph.Models
         public int ArcID { get; set; }
 
         [Index(1)]
-        public double FromX { get; set; }
+        public string FromX { get; set; }
 
         [Index(2)]
-        public double FromY { get; set; }
+        public string FromY { get; set; }
 
         [Index(5)]
-        public double Length { get; set; }
+        public string Length { get; set; }
 
         [Index(8)]
         public int Level { get; set; }
@@ -54,10 +54,10 @@ namespace SFA2Graph.Models
         public string Strasse { get; set; }
 
         [Index(3)]
-        public double ToX { get; set; }
+        public string ToX { get; set; }
 
         [Index(4)]
-        public double ToY { get; set; }
+        public string ToY { get; set; }
 
         [Index(17)]
         [Name("TYP")]

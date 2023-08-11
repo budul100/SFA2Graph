@@ -35,3 +35,5 @@ echo.
 pushd .\RoutingGraph
 tar -a -c -f ..\RoutingGraph.zip *
 popd
+
+PAUSE

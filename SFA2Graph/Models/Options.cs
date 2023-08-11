@@ -6,10 +6,22 @@ namespace SFA2Graph.Models
 {
     public class Options
     {
+        #region Private Fields
+
+        private const int DecimalPointsDefault = 6;
+
+        #endregion Private Fields
+
         #region Public Properties
 
         [Option(
-            shortName: 'i',
+            longName: "decimalpoints",
+            HelpText = "Path of the resulting txt routing graph file.",
+            Default = DecimalPointsDefault)]
+        public int DecimalPoints { get; set; }
+
+        [Option(
+                shortName: 'i',
             longName: "inputpaths",
             HelpText = "Pathes of the GeoJSON files to be input.",
             Required = true,

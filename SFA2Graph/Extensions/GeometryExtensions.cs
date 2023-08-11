@@ -7,15 +7,10 @@ namespace SFA2Graph.Extensions
 {
     internal static class GeometryExtensions
     {
-        #region Private Fields
-
-        private const int VerticesDistanceMin = 5;
-
-        #endregion Private Fields
-
         #region Public Methods
 
-        public static IEnumerable<Vertice> GetVertices(this Geometry geometry)
+        public static IEnumerable<Vertice> GetVertices(this Geometry geometry,
+            int verticesDistanceMin)
         {
             var relevants = geometry?.Coordinates?
                 .Skip(1).SkipLast(1).ToArray();
@@ -30,7 +25,7 @@ namespace SFA2Graph.Extensions
                     var currentDistance = lastCoordinate.GetDistance(relevant);
 
                     if (!relevant.Equals(lastCoordinate)
-                        && currentDistance > VerticesDistanceMin)
+                        && currentDistance > verticesDistanceMin)
                     {
                         distance += currentDistance;
 
