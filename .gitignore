@@ -399,3 +399,8 @@ FodyWeavers.xsd
 # JetBrains Rider
 *.sln.iml
 /Additionals/MakeGrph/RoutingGraph.zip
+/Additionals/Samples/Stralsund.geojson
+/Additionals/Samples/Stralsund.txt
+/Additionals/Samples/Stralsund_.geojson
+/Additionals/Samples/Stralsund_.txt
+/Additionals/MakeGrph/Lines/lines.txt
