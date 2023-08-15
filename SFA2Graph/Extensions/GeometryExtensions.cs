@@ -1,7 +1,6 @@
 ﻿using NetTopologySuite.Geometries;
 using SFA2Graph.Models;
 using System.Collections.Generic;
-using System.Linq;
 
 namespace SFA2Graph.Extensions
 {
@@ -9,37 +8,47 @@ namespace SFA2Graph.Extensions
     {
         #region Public Methods
 
-        public static IEnumerable<Vertice> GetVertices(this Geometry geometry,
-            int verticesDistanceMin)
+        public static IEnumerable<IEnumerable<Vertice>> GetVerticesGroups(this Geometry geometry, int arcLengthMin)
         {
-            var relevants = geometry?.Coordinates?
-                .Skip(1).SkipLast(1).ToArray();
+            var distance = 0.0;
+            var last = default(Coordinate);
+            var result = new List<Vertice>();
 
-            if (relevants.Length > 1)
+            foreach (var coordinate in geometry.Coordinates)
             {
-                var lastCoordinate = geometry.Coordinates[0];
-                var distance = 0.0;
+                distance += last?.GetDistance(coordinate) ?? 0.0;
 
-                foreach (var relevant in relevants)
+                var current = new Vertice
                 {
-                    var currentDistance = lastCoordinate.GetDistance(relevant);
+                    Coordinate = coordinate,
+                    Distance = distance,
+                };
 
-                    if (!relevant.Equals(lastCoordinate)
-                        && currentDistance > verticesDistanceMin)
+                result.Add(current);
+
+                if (distance >= arcLengthMin
+                    && result.Count > 1)
+                {
+                    yield return result;
+
+                    distance = 0.0;
+                    result = new List<Vertice>();
+
+                    current = new Vertice
                     {
-                        distance += currentDistance;
+                        Coordinate = coordinate,
+                        Distance = distance,
+                    };
 
-                        var result = new Vertice
-                        {
-                            Coordinate = relevant,
-                            Distance = distance,
-                        };
-
-                        yield return result;
-
-                        lastCoordinate = relevant;
-                    }
+                    result.Add(current);
                 }
+
+                last = coordinate;
+            }
+
+            if (result.Count > 1)
+            {
+                yield return result;
             }
         }
 

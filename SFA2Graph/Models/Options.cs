@@ -8,6 +8,7 @@ namespace SFA2Graph.Models
     {
         #region Private Fields
 
+        private const int ArcLengthMinDefault = 10;
         private const int DecimalPointsDefault = 6;
 
         #endregion Private Fields
@@ -15,13 +16,22 @@ namespace SFA2Graph.Models
         #region Public Properties
 
         [Option(
+            longName: "arclenmin",
+            HelpText = "Defines the minimum length of an arc in meters. If a connection beween two coordinates is shorter, " +
+                "then it will be exported as vertices between the coordinates.",
+            Default = ArcLengthMinDefault,
+            Required = false)]
+        public int ArcLengthMin { get; set; }
+
+        [Option(
             longName: "decimalpoints",
             HelpText = "Path of the resulting txt routing graph file.",
-            Default = DecimalPointsDefault)]
+            Default = DecimalPointsDefault,
+            Required = false)]
         public int DecimalPoints { get; set; }
 
         [Option(
-                shortName: 'i',
+            shortName: 'i',
             longName: "inputpaths",
             HelpText = "Pathes of the GeoJSON files to be input.",
             Required = true,

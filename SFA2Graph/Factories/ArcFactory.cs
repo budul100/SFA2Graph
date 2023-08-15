@@ -1,5 +1,4 @@
 ﻿using NetTopologySuite.Features;
-using NetTopologySuite.Geometries;
 using ProgressWatcher.Interfaces;
 using SFA2Graph.Extensions;
 using SFA2Graph.Models;
@@ -17,9 +16,9 @@ namespace SFA2Graph.Factories
         private const int LevelDefault = 2;
         private const int RoadclassDefault = 1;
         private const int TypDefault = 0;
-        private const int VerticesDistanceMin = 5;
 
-        private readonly Dictionary<string, Arc> arcs = new();
+        private readonly int arcLengthMin;
+        private readonly Dictionary<HashSet<Vertice>, Arc> arcs = new();
         private readonly int decimalPoints;
         private readonly string delimiter;
 
@@ -29,10 +28,12 @@ namespace SFA2Graph.Factories
 
         #region Public Constructors
 
-        public ArcFactory(int decimalPoints)
+        public ArcFactory(int decimalPoints, int arcLengthMin)
         {
-            delimiter = Vertice.VerticesDelimiter.ToString();
             this.decimalPoints = decimalPoints;
+            this.arcLengthMin = arcLengthMin;
+
+            delimiter = Vertice.VerticesDelimiter.ToString();
         }
 
         #endregion Public Constructors
@@ -49,41 +50,13 @@ namespace SFA2Graph.Factories
         {
             using var infoPackage = parentPackage.GetPackage(
                 items: lines,
-                status: "Convert lines to arcs.");
+                status: "Convert lines into arcs.");
 
             foreach (var line in lines)
             {
-                var geometries = line.GetGeometries().ToArray();
-
-                foreach (var geometry in geometries)
-                {
-                    var vertices = geometry.GetVertices(
-                        verticesDistanceMin: VerticesDistanceMin).ToArray();
-
-                    var verticesText = vertices
-                        .Select(v => v.AsText(decimalPoints))
-                        .Join(delimiter: delimiter);
-
-                    if (!arcs.ContainsKey(verticesText))
-                    {
-                        var lastCoordinate = vertices.LastOrDefault()?.Coordinate
-                            ?? geometry.Coordinates[0];
-                        var lastDistance = vertices.LastOrDefault()?.Distance
-                            ?? 0;
-
-                        var arc = GetArc(
-                            geometry: geometry,
-                            lastCoordinate: lastCoordinate,
-                            lastDistance: lastDistance,
-                            verticesText: verticesText);
-
-                        arcs.Add(
-                            key: verticesText,
-                            value: arc);
-                    }
-                }
-
-                infoPackage.NextStep();
+                ConvertFeature(
+                    feature: line,
+                    parentPackage: infoPackage);
             }
         }
 
@@ -91,21 +64,58 @@ namespace SFA2Graph.Factories
 
         #region Private Methods
 
-        private Arc GetArc(Geometry geometry, Coordinate lastCoordinate, double lastDistance,
-            string verticesText)
+        private void ConvertFeature(Feature feature, IPackage parentPackage)
         {
-            var length = lastDistance + lastCoordinate.GetDistance(geometry.Coordinates[^1]);
+            var geometries = feature.GetGeometries().ToArray();
+
+            using var infoPackage = parentPackage.GetPackage(
+                items: geometries,
+                status: "Convert feature geometries into arcs.");
+
+            foreach (var geometry in geometries)
+            {
+                var verticesGroups = geometry.GetVerticesGroups(
+                    arcLengthMin: arcLengthMin).ToArray();
+
+                foreach (var verticesGroup in verticesGroups)
+                {
+                    var key = new HashSet<Vertice>(verticesGroup);
+
+                    if (!arcs.ContainsKey(key))
+                    {
+                        var result = GetArc(
+                            vertices: verticesGroup);
+
+                        arcs.Add(
+                            key: key,
+                            value: result);
+                    }
+                }
+
+                infoPackage.NextStep();
+            }
+        }
+
+        private Arc GetArc(IEnumerable<Vertice> vertices)
+        {
+            var from = vertices.First();
+            var to = vertices.Last();
+
+            var verticesText = vertices
+                .Skip(1).SkipLast(1)
+                .Select(v => v.AsText(decimalPoints))
+                .Join(delimiter: delimiter);
 
             var result = new Arc
             {
                 ArcID = ++index,
-                FromX = geometry.Coordinates[0].X.ToStringDecimal(decimalPoints),
-                FromY = geometry.Coordinates[0].Y.ToStringDecimal(decimalPoints),
-                Length = length.ToStringInt(),
+                FromX = from.Coordinate.X.ToStringDecimal(decimalPoints),
+                FromY = from.Coordinate.Y.ToStringDecimal(decimalPoints),
+                Length = to.Distance.ToStringInt(),
                 Level = LevelDefault,
                 RoadClass = RoadclassDefault,
-                ToX = geometry.Coordinates[^1].X.ToStringDecimal(decimalPoints),
-                ToY = geometry.Coordinates[^1].Y.ToStringDecimal(decimalPoints),
+                ToX = to.Coordinate.X.ToStringDecimal(decimalPoints),
+                ToY = to.Coordinate.Y.ToStringDecimal(decimalPoints),
                 Typ = TypDefault,
                 Vertices = verticesText,
             };

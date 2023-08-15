@@ -46,7 +46,8 @@ namespace SFA2Graph
                 attributesFilter: lineAttributesFilter);
 
             arcFactory = new ArcFactory(
-                decimalPoints: options.DecimalPoints);
+                decimalPoints: options.DecimalPoints,
+                arcLengthMin: options.ArcLengthMin);
 
             routingWriter = new RoutingWriter();
         }
