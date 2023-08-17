@@ -43,4 +43,5 @@ tar -a -c -f "%ZIPFILE%" *
 
 popd
 
+echo.
 PAUSE
