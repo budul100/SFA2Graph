@@ -1,0 +1,8 @@
+{
+  "profiles": {
+    "Convert Bremen": {
+      "commandName": "Project",
+      "commandLineArgs": "-i \"..\\..\\..\\..\\Additionals\\Samples\\Bremen.geojson\" -o \"..\\..\\..\\..\\Additionals\\MakeGrph\\Lines\\lines.txt\""
+    }
+  }
+}

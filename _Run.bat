@@ -9,7 +9,7 @@ echo.
 echo Convert %INPUTFILE%
 echo.
 
-.\SFA2GraphCLI\bin\Debug\net6.0\SFA2GraphCLI.exe -i "%INPUTFILE%" -o ".\Additionals\MakeGrph\Lines\lines.txt"
+.\_Publish\SFA2Graph.exe -i "%INPUTFILE%" -o ".\Additionals\MakeGrph\Lines\lines.txt"
 
 echo.
 echo *** Remove existing folder ***
